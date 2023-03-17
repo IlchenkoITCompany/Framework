@@ -2,9 +2,10 @@
 namespace Core;
 final class Application 
 {
-    public function run()
+    public function run($rules, $requestPath)
     {
-        echo 'Hello, World!'.'<br>';
+        $router = new \Core\Router($rules, $requestPath);
+        $router->createController();
     }
 }
 
