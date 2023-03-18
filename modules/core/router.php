@@ -26,26 +26,29 @@ final class Router
         $formArray = array();
         foreach($this->rules as $url => $params) {
             if(preg_match($url, $this->requestPath, $result) === 1) {
-                if (isset($_SERVER['REQUEST_METHOD']) && isset($params['requestMethod']) && $_SERVER['REQUEST_METHOD'] == $params['requestMethod']) {
-                    $this->controllerName = $params['controller'].'Form';
-                    $this->actionName = $params['action'];
-                    if(isset($params['params'])) {
-                        for ($i = 0; $i < count($params['params']); $i++) {
-                            $actionParams[$params['params'][$i]] = $result[$i+1];
-                        }
-                        $formArray = ['params' => $actionParams];
-                    }
-                    $formArray['formData'] = $_POST;
-                    return $formArray;
+                if (isset($params['requestMethod'])) {
+                    $this->requestMethod = $params['requestMethod'];
+                } else {
+                    $this->requestMethod = 'GET';
                 }
-                $this->controllerName = $params['controller'];
-                $this->actionName = $params['action'];
+
                 if(isset($params['params'])) {
                     for ($i = 0; $i < count($params['params']); $i++) {
                         $actionParams[$params['params'][$i]] = $result[$i+1];
                     }
-                    return $actionParams;
                 } 
+
+                if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === $this->requestMethod && $this->requestMethod !== 'GET') {
+                    $this->controllerName = $params['controller'].'Form';
+                    $this->actionName = $params['action'];
+
+                    return ['formData' => $_POST, 'params' => $actionParams];
+                } else {
+                    $this->controllerName = $params['controller'];
+                    $this->actionName = $params['action'];
+                    
+                    return ['params' => $actionParams];
+                }
             }
         }
     }
@@ -66,10 +69,11 @@ final class Router
     private function getControllerName()
     {
         if($this->controllerName !== '') {
-            if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+            if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === $this->requestMethod && $this->requestMethod !== 'GET') {
                 return '\FormController\\'.$this->controllerName.'Controller';
-            }
+            } else {
             return '\Controller\\'.$this->controllerName.'Controller';
+            }
         } else {
             return '';
         }

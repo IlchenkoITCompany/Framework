@@ -1,16 +1,14 @@
 <?php
 
 namespace Settings;
-    
-    const RECORDS_ON_PAGE = 7;
 
-    const DB_HOST = 'localhost';
+    const DB_HOST = '';
 
-    const DB_NAME = 'photogallery';
+    const DB_NAME = '';
 
-    const DB_USERNAME = 'root';
+    const DB_USERNAME = '';
 
-    const DB_PASSWORD = 'root';
+    const DB_PASSWORD = '';
 
 
 ?>
