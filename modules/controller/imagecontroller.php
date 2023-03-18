@@ -12,7 +12,7 @@ class ImageController extends \Controller\BaseController
 
     public function item($params) 
     {
-        $this->render('item', $params);
+        $this->render('item', ['filename' => 'helloworld.png']);
     }
 
     public function by_user($params)
